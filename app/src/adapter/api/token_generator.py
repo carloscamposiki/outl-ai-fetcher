@@ -21,7 +21,7 @@ class TokenGenerator:
         return self._to_session(session_secret)
 
     def get_session(self) -> Session:
-        if self.token.is_token_expired():
+        if self.session.is_token_expired():
             self._generate_session()
         return self.session
 
