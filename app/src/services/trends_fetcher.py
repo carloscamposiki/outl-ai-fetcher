@@ -3,6 +3,7 @@ from src.adapter.aws.dynamo import DynamoAdapter
 from src.adapter.api.blue_sky_api import BlueSkyAPI
 import re
 import time
+from decimal import Decimal
 
 class TrendsFetcher:
 
@@ -70,7 +71,11 @@ class TrendsFetcher:
             'type': 'cache',
             'id': 'trends',
             'trends': [
-                {'name': trend.name, 'created_at': trend.created_at} for trend in trends
+                {
+                    'name': trend.name,
+                    'category': trend.category,
+                    'created_at': Decimal(trend.created_at)
+                } for trend in trends
             ]
         }
         self.dynamo_adapter.put_item(

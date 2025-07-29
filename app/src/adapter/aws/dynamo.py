@@ -23,8 +23,8 @@ class DynamoAdapter:
 
     def get_item(self, table_name: str, key: dict) -> dict | None:
         try:
-            # Serialize the key to DynamoDB format with 'q' as the type
-            serialized_key = {k: {'q': v} for k, v in key.items()}
+            # Serialize the key to DynamoDB format
+            serialized_key = {k: self.serializer.serialize(v) for k, v in key.items()}
             response = self.client.get_item(
                 TableName=table_name,
                 Key=serialized_key
