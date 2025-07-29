@@ -1,11 +1,11 @@
 import requests
 from src.exception.blue_sky_exception import BlueSkyException
 from src.entity.post import Post
-from src.adapter.api.token_generator import TokenGenerator
+from src.adapter.api.token_manager import TokenManager
 
 class BlueSkyAPI:
 
-    def __init__(self, token_generator: TokenGenerator):
+    def __init__(self, token_generator: TokenManager):
         self.token_generator = token_generator
 
     def get_user_posts(self, username: str, limit: int = 100) -> list[Post]:

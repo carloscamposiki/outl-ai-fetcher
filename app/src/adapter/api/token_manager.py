@@ -5,7 +5,7 @@ import requests
 from src.entity.session import Session
 from src.exception.blue_sky_exception import BlueSkyException
 
-class TokenGenerator:
+class TokenManager:
 
     def __init__(self,
                  secrets_manager: SecretsManager,
@@ -22,11 +22,13 @@ class TokenGenerator:
 
     def get_session(self) -> Session:
         if self.session.is_token_expired():
+            print("Token expired")
             self._generate_session()
         return self.session
 
     def _generate_session(self) -> None:
         if self.session.is_refresh_token_expired():
+            print("Refresh token expired")
             self._generate_new_session()
         else:
             self._refresh_session()
@@ -54,17 +56,18 @@ class TokenGenerator:
         return self.secrets_manager.get_secret(self.blue_sky_credentials_secret_name)
 
     def _update_secrets_manager(self) -> None:
-        return self.secrets_manager.update_secret(
+        new_secret_value = {
+            'token': self.session.token,
+            'refresh_token': self.session.refresh_token,
+            'token_generated_at': self.session.token_generated_at,
+            'refresh_token_generated_at': self.session.refresh_token_generated_at
+        }
+        self.secrets_manager.update_secret(
             secret_name=self.session_secret_name,
-            new_secret_value={
-                'token': self.session.token,
-                'refresh_token': self.session.refresh_token,
-                'token_generated_at': self.session.token_generated_at,
-                'refresh_token_generated_at': self.session.refresh_token_generated_at
-            }
+            new_secret_value=new_secret_value
         )
 
-    def _generate_token(self, username: str, password: str) -> dict:
+    def _generate_token(self, username: str, password: str) -> Session:
         url = f'https://bsky.social/xrpc/com.atproto.server.createSession'
         payload = {
             'identifier': username,
@@ -75,10 +78,10 @@ class TokenGenerator:
         response = requests.post(url, json=payload, headers=headers)
 
         if response.status_code == 200:
-            return {
-                'token': f'Bearer{response.json().get("accessJwt")}',
-                'refresh_token': f'Bearer{response.json().get("refreshJwt")}'
-            }
+            return Session(
+                token=f'Bearer {response.json().get("accessJwt")}',
+                refresh_token=f'Bearer {response.json().get("refreshJwt")}'
+            )
         else:
             raise BlueSkyException(f'Failed to generate token: {response.status_code} - {response.text}')
 

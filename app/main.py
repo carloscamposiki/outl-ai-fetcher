@@ -1,5 +1,5 @@
 from src.adapter.api.blue_sky_api import BlueSkyAPI
-from src.adapter.api.token_generator import TokenGenerator
+from src.adapter.api.token_manager import TokenManager
 from src.adapter.aws.secrets_manager import SecretsManager
 from src.adapter.aws.dynamo import DynamoAdapter
 from src.adapter.aws.sqs import SqsAdapter
@@ -17,11 +17,11 @@ secrets_manager = SecretsManager()
 dynamo_adapter = DynamoAdapter()
 sqs_adapter = SqsAdapter(trends_processing_queue)
 
-token_generator = TokenGenerator(secrets_manager=secrets_manager,
-                                 session_secret_name=session_secret_name,
-                                 blue_sky_credentials_secret_name=blue_sky_credentials_secret_name)
+token_manager = TokenManager(secrets_manager=secrets_manager,
+                               session_secret_name=session_secret_name,
+                               blue_sky_credentials_secret_name=blue_sky_credentials_secret_name)
 
-blue_sky_api = BlueSkyAPI(token_generator)
+blue_sky_api = BlueSkyAPI(token_manager)
 
 trends_fetcher = TrendsFetcher(dynamo_adapter=dynamo_adapter,
                                blue_sky_api=blue_sky_api,
