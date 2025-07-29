@@ -29,7 +29,7 @@ class TrendsFetcher:
             raise ValueError('No trends found in the response.')
         for trend in trends_response:
             new_trend = Trend(
-                name=trend['name'],
+                name=trend['displayName'],
                 category=trend.get('category', 'general')
             )
             latest_trends.append(new_trend)
