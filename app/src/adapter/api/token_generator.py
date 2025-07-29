@@ -23,12 +23,10 @@ class TokenGenerator:
     def __init__(self,
                  secrets_manager: SecretsManager,
                  token_secret_name: str,
-                 blue_sky_credentials_secret_name: str
-                 ):
+                 blue_sky_credentials_secret_name: str):
         self.secrets_manager = secrets_manager
         self.token_secret_name = token_secret_name
         self.token = self._retrieve_token()
-        self.blueSkyApi = blue_sky_api
         self.blue_sky_credentials_secret_name = blue_sky_credentials_secret_name
 
     def _retrieve_token(self) -> Token:

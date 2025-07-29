@@ -7,11 +7,6 @@ resource "aws_lambda_function" "lambda_function" {
   filename         = "${path.module}/lambda.zip"
   source_code_hash = filebase64sha256("${path.module}/lambda.zip")
 
-  vpc_config {
-    subnet_ids         = var.subnet_ids
-    security_group_ids = var.security_group_ids
-  }
-
   environment {
     variables = {
       TOKEN_SECRET_NAME = "ool/bluesky/token",
