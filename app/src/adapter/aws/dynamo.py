@@ -4,7 +4,7 @@ from boto3.dynamodb.types import TypeSerializer, TypeDeserializer
 class DynamoAdapter:
 
     def __init__(self):
-        self.client = boto3.client('dynamodb')
+        self.client = boto3.client('dynamodb', region_name='us-east-1')
         self.serializer = TypeSerializer()
         self.deserializer = TypeDeserializer()
 
