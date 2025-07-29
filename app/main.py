@@ -11,7 +11,7 @@ import os
 session_secret_name = os.getenv('SESSION_SECRET_NAME')
 blue_sky_credentials_secret_name = os.getenv('BLUE_SKY_CREDENTIALS_SECRET_NAME')
 trends_processing_queue = os.getenv('TRENDS_PROCESSING_QUEUE')
-dynamo_table_name = os.getenv('DYNAMO_TABLE_NAME')
+dynamo_table_name = os.getenv('DYNAMO_TRENDS_TABLE_NAME')
 
 secrets_manager = SecretsManager()
 dynamo_adapter = DynamoAdapter()
@@ -25,7 +25,7 @@ blue_sky_api = BlueSkyAPI(token_manager)
 
 trends_fetcher = TrendsFetcher(dynamo_adapter=dynamo_adapter,
                                blue_sky_api=blue_sky_api,
-                               dynamo_table_name='trends_cache')
+                               dynamo_table_name=dynamo_table_name)
 posts_fetcher = PostsFetcher(blue_sky_api)
 new_trends_sender = NewTrendsSender(sqs_adapter)
 
