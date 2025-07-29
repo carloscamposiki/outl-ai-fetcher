@@ -3,6 +3,5 @@ terraform {
     bucket         = "4969-9358-4089-terraform-state"
     key            = terraform.workspace
     region         = "us-east-1"
-    dynamodb_table = "terraform-locks"
   }
 }
