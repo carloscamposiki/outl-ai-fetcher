@@ -33,7 +33,7 @@ class BlueSkyAPI:
             raise BlueSkyException(f'Failed to fetch trends: {response.status_code} - {response.text}')
 
     def search_posts(self, query: str, limit: int = 100) -> list:
-        url = f'https://bsky.social/xrpc/app.bsky.feed.searchPosts?query={query}&limit={limit}'
+        url = f'https://bsky.social/xrpc/app.bsky.feed.searchPosts?q={query}&limit={limit}'
         token = self.token_generator.get_session().get_token()
         headers = {'Authorization': token}
 
