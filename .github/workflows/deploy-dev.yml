@@ -1,0 +1,49 @@
+name: Deploy to Dev
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.6.6
+
+    - name: Configure AWS credentials (OIDC)
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::496993584089:role/githubactions-oidc-role
+        role-session-name: github-actions
+        aws-region: us-east-1
+
+    - name: Package Lambda ZIP
+      run: |
+        mkdir -p lambda_build
+        cp -r src/* lambda_build/
+        # Optional: if you have requirements.txt
+        if [ -f src/requirements.txt ]; then
+          pip install -r src/requirements.txt -t lambda_build/
+        fi
+        cd lambda_build
+        zip -r ../lambda/lambda.zip .
+
+    - name: Terraform Init
+      working-directory: lambda
+      run: terraform init
+
+    - name: Terraform Apply
+      working-directory: lambda
+      run: terraform apply -auto-approve -var-file="inventories/dev/terraform.tfvars"

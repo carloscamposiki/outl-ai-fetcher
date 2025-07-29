@@ -1,0 +1,2 @@
+class BlueSkyException(Exception):
+    pass
