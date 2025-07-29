@@ -1,10 +1,10 @@
-from app.src.adapter.aws.secrets_manager import SecretsManager
-from app.src.adapter.api.blue_sky_api import BlueSkyAPI
+from src.adapter.aws.secrets_manager import SecretsManager
+from src.adapter.api.blue_sky_api import BlueSkyAPI
 from time import time
 import requests
 
-from app.src.entity.token import Token
-from app.src.exception.blue_sky_exception import BlueSkyException
+from src.entity.token import Token
+from src.exception.blue_sky_exception import BlueSkyException
 
 
 def _to_token(secret_data: dict) -> Token:

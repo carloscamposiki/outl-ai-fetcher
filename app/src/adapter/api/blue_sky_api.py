@@ -1,7 +1,7 @@
 import requests
-from app.src.exception.blue_sky_exception import BlueSkyException
-from app.src.entity.post import Post
-from app.src.adapter.api.token_generator import TokenGenerator
+from src.exception.blue_sky_exception import BlueSkyException
+from src.entity.post import Post
+from src.adapter.api.token_generator import TokenGenerator
 
 class BlueSkyAPI:
 
