@@ -58,7 +58,7 @@ jobs:
     - name: Import existing Lambda function
       if: env.exists == 'true'
       working-directory: infra
-      run: terraform import aws_lambda_function.<resource_name> lambda-ool-fetcher-dev
+      run: terraform import aws_lambda_function.lambda_function lambda-ool-fetcher-dev
 
     - name: Terraform Apply
       working-directory: infra
