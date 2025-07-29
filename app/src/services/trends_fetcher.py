@@ -53,6 +53,8 @@ class TrendsFetcher:
                 'id': 'trends'
             }
         )
+        if not item or 'trends' not in item:
+            return []
         trends = []
         for trend_dict in item.get('trends'):
             trend = Trend(
@@ -67,7 +69,9 @@ class TrendsFetcher:
         item = {
             'type': 'cache',
             'id': 'trends',
-            'trends': [{'name': trend.name, 'created_at': trend.created_at} for trend in trends]
+            'trends': [
+                {'name': trend.name, 'created_at': trend.created_at} for trend in trends
+            ]
         }
         self.dynamo_adapter.put_item(
             table_name=self.dynamo_table_name,

@@ -30,7 +30,7 @@ posts_fetcher = PostsFetcher(blue_sky_api)
 new_trends_sender = NewTrendsSender(sqs_adapter)
 
 
-def handler(_, __):
+def lambda_handler(_, __):
     trends = trend_fetcher.fetch()
     new_trends = posts_fetcher.fetch(trends)
     new_trends_sender.send(new_trends)
