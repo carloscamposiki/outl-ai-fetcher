@@ -31,19 +31,20 @@ jobs:
 
     - name: Package Lambda ZIP
       run: |
-        mkdir -p lambda_build
+        set -euo pipefail
+        ARTIFACT_DIR=infra
+        mkdir -p lambda_build "${ARTIFACT_DIR}"
         cp -r app/src/* lambda_build/
-        # Optional: if you have requirements.txt
-        if [ -f src/requirements.txt ]; then
-          pip install -r src/requirements.txt -t lambda_build/
+        # Install deps into the bundle (correct path to requirements.txt)
+        if [ -f app/src/requirements.txt ]; then
+          python3 -m pip install -r app/src/requirements.txt -t lambda_build/
         fi
-        cd lambda_build
-        zip -r ../lambda/lambda.zip .
+        (cd lambda_build && zip -r "../${ARTIFACT_DIR}/lambda.zip" .)
 
     - name: Terraform Init
-      working-directory: lambda
+      working-directory: infra
       run: terraform init
 
     - name: Terraform Apply
-      working-directory: lambda
+      working-directory: infra
       run: terraform apply -auto-approve -var-file="inventories/prod/terraform.tfvars"
