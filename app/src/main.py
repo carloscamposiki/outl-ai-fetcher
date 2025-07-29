@@ -10,7 +10,7 @@ def handler(event, context):
     """
     blue_sky_api = BlueSkyAPI()
     token = blue_sky_api.generate_token()
-
+    print(token)
     return {
         'statusCode': 200,
         'body': {
