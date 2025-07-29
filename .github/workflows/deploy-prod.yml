@@ -45,20 +45,13 @@ jobs:
       working-directory: infra
       run: terraform init
 
-    - name: Check if Lambda exists
-      id: check_lambda
-      run: |
-        set -euo pipefail
-        if aws lambda get-function --function-name lambda-ool-fetcher-dev > /dev/null 2>&1; then
-          echo "exists=true" >> $GITHUB_ENV
-        else
-          echo "exists=false" >> $GITHUB_ENV
-        fi
-
-    - name: Import existing Lambda function
-      if: env.exists == 'true'
+    - name: Select Terraform Workspace
       working-directory: infra
-      run: terraform import aws_lambda_function.lambda_function lambda-ool-fetcher-dev
+      run: terraform workspace select prod || terraform workspace new prod
+
+    - name: Terraform Plan
+      working-directory: infra
+      run: terraform plan -var-file="inventories/prod/terraform.tfvars"
 
     - name: Terraform Apply
       working-directory: infra
