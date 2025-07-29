@@ -11,7 +11,8 @@ class BlueSkyAPI:
 
     def get_user_posts(self, username: str, limit: int = 100) -> list[Post]:
         url = f'https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?actor={username}&limit={limit}'
-        headers = {'Authorization': self.token_generator.get_token().token}
+        token = self.token_generator.get_session().get_token()
+        headers = {'Authorization': token}
 
         response = requests.get(url, headers=headers)
 
@@ -22,7 +23,8 @@ class BlueSkyAPI:
 
     def get_trends(self):
         url = 'https://bsky.social/xrpc/app.bsky.unspecced.getTrends'
-        headers = {'Authorization': self.token_generator.get_token().token}
+        token = self.token_generator.get_session().get_token()
+        headers = {'Authorization': token}
 
         response = requests.get(url, headers=headers)
 

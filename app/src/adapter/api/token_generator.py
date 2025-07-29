@@ -2,65 +2,52 @@ from src.adapter.aws.secrets_manager import SecretsManager
 from time import time
 import requests
 
-from src.entity.token import Token
+from src.entity.session import Session
 from src.exception.blue_sky_exception import BlueSkyException
-
-
-def _to_token(secret_data: dict) -> Token:
-    token = secret_data.get('token')
-    refresh_token = secret_data.get('refresh_token')
-    token_generated_at = secret_data.get('token_generated_at')
-    refresh_token_generated_at = secret_data.get('refresh_token_generated_at')
-    return Token(
-        token=token,
-        refresh_token=refresh_token,
-        token_generated_at=token_generated_at,
-        refresh_token_generated_at=refresh_token_generated_at
-    )
 
 class TokenGenerator:
 
     def __init__(self,
                  secrets_manager: SecretsManager,
-                 token_secret_name: str,
+                 session_secret_name: str,
                  blue_sky_credentials_secret_name: str):
         self.secrets_manager = secrets_manager
-        self.token_secret_name = token_secret_name
-        self.token = self._retrieve_token()
+        self.session_secret_name = session_secret_name
+        self.session = self._retrieve_session()
         self.blue_sky_credentials_secret_name = blue_sky_credentials_secret_name
 
-    def _retrieve_token(self) -> Token:
-        token_json = self.secrets_manager.get_secret(self.token_secret_name)
-        return _to_token(token_json)
+    def _retrieve_session(self) -> Session:
+        session_secret = self.secrets_manager.get_secret(self.session_secret_name)
+        return self._to_session(session_secret)
 
-    def get_token(self) -> Token:
+    def get_session(self) -> Session:
         if self.token.is_token_expired():
-            self._generate_token()
-        return self.token
+            self._generate_session()
+        return self.session
 
-    def _generate_token(self) -> Token:
-        if self.token.is_refresh_token_expired():
-            self._generate_new_token()
+    def _generate_session(self) -> None:
+        if self.session.is_refresh_token_expired():
+            self._generate_new_session()
         else:
-            self._refresh_token()
+            self._refresh_session()
 
-    def _generate_new_token(self) -> None:
-        credentials = self._get_user_credentials()
-        self.token = self.blueSkyApi.generate_token(
-            username=credentials['username'],
-            password=credentials['password']
+    def _generate_new_session(self) -> None:
+        user_credentials = self._get_user_credentials()
+        self.session = self._generate_token(
+            username=user_credentials['username'],
+            password=user_credentials['password']
         )
         self._update_secrets_manager()
 
-    def _refresh_token(self) -> None:
-        token_data = self.blueSkyApi.refresh_token(self.token.refresh_token)
-        new_token = Token(
-            token=f"Bearer {token_data['token']}",
-            refresh_token=f"Bearer {token_data['refresh_token']}",
+    def _refresh_session(self) -> None:
+        session_data = self._refresh_token(self.session.refresh_token)
+        new_session = Session(
+            token=f'Bearer {session_data['token']}',
+            refresh_token=f'Bearer {session_data['refresh_token']}',
             token_generated_at=time(),
-            refresh_token_generated_at=self.token.refresh_token_generated_at
+            refresh_token_generated_at=self.session.refresh_token_generated_at
         )
-        self.token = new_token
+        self.session = new_session
         self._update_secrets_manager()
 
     def _get_user_credentials(self) -> dict:
@@ -68,7 +55,7 @@ class TokenGenerator:
 
     def _update_secrets_manager(self) -> None:
         return self.secrets_manager.update_secret(
-            secret_name=self.token_secret_name,
+            secret_name=self.session_secret_name,
             new_secret_value={
                 'token': self.token.token,
                 'refresh_token': self.token.refresh_token,
@@ -77,8 +64,8 @@ class TokenGenerator:
             }
         )
 
-    def generate_token(self, username: str, password: str) -> dict:
-        url = f'{self.base_url}/auth/login'
+    def _generate_token(self, username: str, password: str) -> dict:
+        url = f'https://bsky.social/xrpc/com.atproto.server.createSession'
         payload = {
             'identifier': username,
             'password': password
@@ -89,14 +76,14 @@ class TokenGenerator:
 
         if response.status_code == 200:
             return {
-                'token': f"Bearer{response.json().get('accessJwt')}",
-                'refresh_token': f"Bearer{response.json().get('refreshJwt')}"
+                'token': f'Bearer{response.json().get('accessJwt')}',
+                'refresh_token': f'Bearer{response.json().get('refreshJwt')}'
             }
         else:
             raise BlueSkyException(f'Failed to generate token: {response.status_code} - {response.text}')
 
-    def refresh_token(self, refresh_token: str) -> dict:
-        url = f'{self.base_url}/auth/refresh'
+    def _refresh_token(self, refresh_token: str) -> dict:
+        url = f'https://bsky.social/xrpc/com.atproto.server.refreshSession'
         payload = {
             'refresh_token': refresh_token
         }
@@ -106,8 +93,20 @@ class TokenGenerator:
 
         if response.status_code == 200:
             return {
-                'token': f"Bearer{response.json().get('accessJwt')}",
-                'refresh_token': f"Bearer{response.json().get('refreshJwt')}"
+                'token': f'Bearer{response.json().get('accessJwt')}',
+                'refresh_token': f'Bearer{response.json().get('refreshJwt')}'
             }
         else:
             raise BlueSkyException(f'Failed to refresh token: {response.status_code} - {response.text}')
+
+    def _to_session(self, session_secret: dict) -> Session:
+        token = session_secret.get('token')
+        refresh_token = session_secret.get('refresh_token')
+        token_generated_at = session_secret.get('token_generated_at')
+        refresh_token_generated_at = session_secret.get('refresh_token_generated_at')
+        return Session(
+            token=token,
+            refresh_token=refresh_token,
+            token_generated_at=token_generated_at,
+            refresh_token_generated_at=refresh_token_generated_at
+        )

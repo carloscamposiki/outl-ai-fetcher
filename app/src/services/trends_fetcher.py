@@ -26,7 +26,7 @@ class TrendsFetcher:
         latest_trends = []
         trends_response = self.blue_sky_api.get_trends()
         if not trends_response:
-            raise ValueError("No trends found in the response.")
+            raise ValueError('No trends found in the response.')
         for trend in trends_response:
             new_trend = Trend(
                 name=trend['name'],
@@ -81,7 +81,7 @@ class TrendsFetcher:
     def _extract_trends_from_post(self, text: str) -> list[str]:
         trends = re.findall(r'#\w+', text)
         if not trends:
-            raise ValueError("No trends found in the post content.")
+            raise ValueError('No trends found in the post content.')
         return trends
 
     def _remove_expired_trends(self, existing_trends: list[Trend]) -> list[Trend]:
