@@ -37,7 +37,7 @@ jobs:
         cp -r app/* lambda_build/
         # Install deps into the bundle (correct path to requirements.txt)
         if [ -f app/src/requirements.txt ]; then
-          python3 -m pip install -r app/src/requirements.txt -t lambda_build/
+          python3 -m pip install -r app/requirements.txt -t lambda_build/
         fi
         (cd lambda_build && zip -r "../${ARTIFACT_DIR}/lambda.zip" .)
 
