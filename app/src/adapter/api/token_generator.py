@@ -1,5 +1,4 @@
 from src.adapter.aws.secrets_manager import SecretsManager
-from src.adapter.api.blue_sky_api import BlueSkyAPI
 from time import time
 import requests
 
@@ -24,8 +23,7 @@ class TokenGenerator:
     def __init__(self,
                  secrets_manager: SecretsManager,
                  token_secret_name: str,
-                 blue_sky_credentials_secret_name: str,
-                 blue_sky_api: BlueSkyAPI
+                 blue_sky_credentials_secret_name: str
                  ):
         self.secrets_manager = secrets_manager
         self.token_secret_name = token_secret_name

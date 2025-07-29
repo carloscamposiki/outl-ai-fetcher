@@ -22,3 +22,13 @@ variable "security_group_ids" {
   description = "List of security groups for Lambda networking"
   type        = list(string)
 }
+
+variable "dynamo_trends_table_name" {
+  description = "The name of the DynamoDB table for trends"
+  type        = string
+}
+
+variable "queue_processing_trends" {
+    description = "The SQS queue for processing trends"
+    type        = string
+}

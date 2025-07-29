@@ -1,20 +1,40 @@
 from src.adapter.api.blue_sky_api import BlueSkyAPI
+from src.adapter.api.token_generator import TokenGenerator
+from src.adapter.aws.secrets_manager import SecretsManager
+from src.adapter.aws.dynamo import DynamoAdapter
+from src.adapter.aws.sqs import SqsAdapter
+from src.services.trends_fetcher import TrendsFetcher
+from src.services.posts_fetcher import PostsFetcher
+from src.services.new_trends_sender import NewTrendsSender
+import os
 
-def handler(event, context):
-    """
-    Lambda function handler to generate a new token for BlueSky API.
+token_secret_name = os.getenv('TOKEN_SECRET_NAME')
+blue_sky_credentials_secret_name = os.getenv('BLUE_SKY_CREDENTIALS_SECRET_NAME')
+trends_processing_queue = os.getenv('TRENDS_PROCESSING_QUEUE')
+dynamo_table_name = os.getenv('DYNAMO_TABLE_NAME')
 
-    :param event: The event data passed to the Lambda function.
-    :param context: The runtime information of the Lambda function.
-    :return: A dictionary containing the new token and refresh token.
-    """
-    blue_sky_api = BlueSkyAPI()
-    token = blue_sky_api.generate_token()
-    print(token)
+secrets_manager = SecretsManager()
+dynamo_adapter = DynamoAdapter()
+sqs_adapter = SqsAdapter(trends_processing_queue)
+
+token_generator = TokenGenerator(secrets_manager=secrets_manager,
+                                 token_secret_name=token_secret_name,
+                                 blue_sky_credentials_secret_name=blue_sky_credentials_secret_name)
+
+blue_sky_api = BlueSkyAPI(token_generator)
+
+trend_fetcher = TrendsFetcher(dynamo_adapter=dynamo_adapter,
+                              blue_sky_api=blue_sky_api,
+                              dynamo_table_name='trends_cache')
+posts_fetcher = PostsFetcher(blue_sky_api)
+new_trends_sender = NewTrendsSender(sqs_adapter)
+
+
+def handler(_, __):
+    trends = trend_fetcher.fetch()
+    new_trends = posts_fetcher.fetch(trends)
+    new_trends_sender.send(new_trends)
+
     return {
-        'statusCode': 200,
-        'body': {
-            'token': token.token,
-            'refresh_token': token.refresh_token
-        }
+        'statusCode': 200
     }

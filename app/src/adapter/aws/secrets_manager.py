@@ -3,7 +3,7 @@ import json
 
 class SecretsManager:
 
-    def __init__(self, region_name: str):
+    def __init__(self, region_name: str = 'us-east-1'):
         self.client = boto3.client('secretsmanager', region_name=region_name)
 
     def get_secret(self, secret_name: str) -> dict:
