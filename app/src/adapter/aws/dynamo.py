@@ -16,9 +16,9 @@ class DynamoAdapter:
                 TableName=table_name,
                 Item=serialized_item
             )
-            print(f"Item added to table {table_name} successfully.")
+            print(f'Item added to table {table_name} successfully.')
         except Exception as e:
-            print(f"Error adding item to table {table_name}: {e}")
+            print(f'Error adding item to table {table_name}: {e}')
             raise
 
     def get_item(self, table_name: str, key: dict) -> dict | None:
@@ -32,8 +32,8 @@ class DynamoAdapter:
             # Deserialize the item back to Python format
             return {k: self.deserializer.deserialize(v) for k, v in response.get('Item', {}).items()}
         except self.client.exceptions.ResourceNotFoundException:
-            print(f"No item found in table {table_name} with key {key}.")
+            print(f'No item found in table {table_name} with key {key}.')
             return None
         except Exception as e:
-            print(f"Error retrieving item from table {table_name}: {e}")
+            print(f'Error retrieving item from table {table_name}: {e}')
             raise

@@ -9,7 +9,7 @@ class NewTrendsSender:
 
     def send(self, new_trends: dict[Trend, list[str]]) -> None:
         if not new_trends:
-            print("No new trends to send.")
+            print('No new trends to send.')
             return
 
         for (trend, posts) in new_trends.items():
@@ -21,5 +21,5 @@ class NewTrendsSender:
             try:
                 self.sqs_adapter.send_message(message)
             except Exception as e:
-                print(f"Failed to send message for trend {trend.name}: {e}")
+                print(f'Failed to send message for trend {trend.name}: {e}')
                 raise
