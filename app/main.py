@@ -23,15 +23,15 @@ token_generator = TokenGenerator(secrets_manager=secrets_manager,
 
 blue_sky_api = BlueSkyAPI(token_generator)
 
-trend_fetcher = TrendsFetcher(dynamo_adapter=dynamo_adapter,
-                              blue_sky_api=blue_sky_api,
-                              dynamo_table_name='trends_cache')
+trends_fetcher = TrendsFetcher(dynamo_adapter=dynamo_adapter,
+                               blue_sky_api=blue_sky_api,
+                               dynamo_table_name='trends_cache')
 posts_fetcher = PostsFetcher(blue_sky_api)
 new_trends_sender = NewTrendsSender(sqs_adapter)
 
 
 def lambda_handler(_, __):
-    trends = trend_fetcher.fetch()
+    trends = trends_fetcher.fetch()
     new_trends = posts_fetcher.fetch(trends)
     new_trends_sender.send(new_trends)
 

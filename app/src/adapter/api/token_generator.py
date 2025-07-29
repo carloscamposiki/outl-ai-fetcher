@@ -57,10 +57,10 @@ class TokenGenerator:
         return self.secrets_manager.update_secret(
             secret_name=self.session_secret_name,
             new_secret_value={
-                'token': self.token.token,
-                'refresh_token': self.token.refresh_token,
-                'token_generated_at': self.token.token_generated_at,
-                'refresh_token_generated_at': self.token.refresh_token_generated_at
+                'token': self.session.token,
+                'refresh_token': self.session.refresh_token,
+                'token_generated_at': self.session.token_generated_at,
+                'refresh_token_generated_at': self.session.refresh_token_generated_at
             }
         )
 
