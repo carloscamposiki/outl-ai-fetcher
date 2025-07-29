@@ -13,7 +13,7 @@ class SqsAdapter:
                 QueueUrl=self.queue_url,
                 MessageBody=json.dumps(message)
             )
-            print(f'Message sent successfully: {response['MessageId']}')
+            print(f'Message sent successfully: {response["MessageId"]}')
         except Exception as e:
             print(f'Error sending message: {e}')
             raise
