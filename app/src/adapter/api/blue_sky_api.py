@@ -20,6 +20,17 @@ class BlueSkyAPI:
         else:
             raise BlueSkyException(f'Failed to fetch posts: {response.status_code} - {response.text}')
 
+    def get_trends(self):
+        url = 'https://bsky.social/xrpc/app.bsky.unspecced.getTrends'
+        headers = {'Authorization': self.token_generator.get_token()}
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            return response.json()['trends']
+        else:
+            raise BlueSkyException(f'Failed to fetch trends: {response.status_code} - {response.text}')
+
     def search_posts(self, query: str, limit: int = 100) -> list:
         url = f'{self.base_url}/search?query={query}&limit={limit}'
         headers = {'Authorization': f'Bearer {self.api_key}'}
