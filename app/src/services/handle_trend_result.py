@@ -1,6 +1,6 @@
-from app.src.entity.tag import Tag
-from app.src.adapter.aws.dynamo import DynamoAdapter
-from app.src.adapter.aws.sqs import SqsAdapter
+from src.entity.tag import Tag
+from src.adapter.aws.dynamo import DynamoAdapter
+from src.adapter.aws.sqs import SqsAdapter
 import re
 import time
 
