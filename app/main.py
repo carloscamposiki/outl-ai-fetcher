@@ -8,7 +8,7 @@ from src.services.posts_fetcher import PostsFetcher
 from src.services.new_trends_sender import NewTrendsSender
 import os
 
-token_secret_name = os.getenv('TOKEN_SECRET_NAME')
+session_secret_name = os.getenv('SESSION_SECRET_NAME')
 blue_sky_credentials_secret_name = os.getenv('BLUE_SKY_CREDENTIALS_SECRET_NAME')
 trends_processing_queue = os.getenv('TRENDS_PROCESSING_QUEUE')
 dynamo_table_name = os.getenv('DYNAMO_TABLE_NAME')
@@ -18,7 +18,7 @@ dynamo_adapter = DynamoAdapter()
 sqs_adapter = SqsAdapter(trends_processing_queue)
 
 token_generator = TokenGenerator(secrets_manager=secrets_manager,
-                                 token_secret_name=token_secret_name,
+                                 session_secret_name=session_secret_name,
                                  blue_sky_credentials_secret_name=blue_sky_credentials_secret_name)
 
 blue_sky_api = BlueSkyAPI(token_generator)
