@@ -32,7 +32,7 @@ jobs:
     - name: Package Lambda ZIP
       run: |
         mkdir -p lambda_build
-        cp -r src/* lambda_build/
+        cp -r app/src/* lambda_build/
         # Optional: if you have requirements.txt
         if [ -f src/requirements.txt ]; then
           pip install -r src/requirements.txt -t lambda_build/
