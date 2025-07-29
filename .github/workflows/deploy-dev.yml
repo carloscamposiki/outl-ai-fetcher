@@ -43,7 +43,8 @@ jobs:
 
     - name: Terraform Init
       working-directory: infra
-      run: terraform init
+      run: terraform init \
+        -backend-config="key=dev/terraform.tfstate"
 
     - name: Select Terraform Workspace
       working-directory: infra
