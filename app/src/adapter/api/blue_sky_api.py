@@ -7,7 +7,6 @@ class BlueSkyAPI:
 
     def __init__(self, token_generator: TokenGenerator):
         self.token_generator = token_generator
-        self.base_url = 'https://api.bsky.app/v1'
 
     def get_user_posts(self, username: str, limit: int = 100) -> list[Post]:
         url = f'https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?actor={username}&limit={limit}'
@@ -34,8 +33,9 @@ class BlueSkyAPI:
             raise BlueSkyException(f'Failed to fetch trends: {response.status_code} - {response.text}')
 
     def search_posts(self, query: str, limit: int = 100) -> list:
-        url = f'{self.base_url}/search?query={query}&limit={limit}'
-        headers = {'Authorization': f'Bearer {self.api_key}'}
+        url = f'https://bsky.social/xrpc/app.bsky.feed.searchPosts?query={query}&limit={limit}'
+        token = self.token_generator.get_session().get_token()
+        headers = {'Authorization': token}
 
         response = requests.get(url, headers=headers)
 
