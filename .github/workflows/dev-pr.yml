@@ -1,0 +1,30 @@
+name: PR to develop
+on:
+  push:
+    branches:
+      - feature/*
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-mr:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Install GitHub CLI
+      run: sudo apt-get install -y gh
+
+    - name: Create PR to develop
+      run: |
+          set -euo pipefail
+          PR_TITLE="Merge feature branch to develop"
+          PR_BODY="This PR merges the feature branch into develop."
+          gh pr create --base develop --head ${{ github.ref }} --title "$PR_TITLE" --body "$PR_BODY" --label "auto-generated"
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
