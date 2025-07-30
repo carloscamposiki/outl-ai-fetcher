@@ -46,7 +46,6 @@ class TokenManager:
         self._update_secrets_manager()
 
     def _refresh_session(self) -> None:
-        print("Refreshing session " + self.session.refresh_token)
         session_data = self._refresh_token(self.session.refresh_token)
         new_session = Session(
             token=session_data["token"],
