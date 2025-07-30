@@ -23,7 +23,6 @@ class SecretsManager:
                 SecretId=secret_name,
                 SecretString=json.dumps(new_secret_value)
             )
-            print(f'Secret {secret_name} updated successfully.')
         except Exception as e:
             print(f'Error updating secret: {e}')
             raise

@@ -23,3 +23,4 @@ class NewTrendsSender:
             except Exception as e:
                 print(f'Failed to send message for trend {trend.name}: {e}')
                 raise
+        print(f'Sent {len(new_trends.items())} new trends to SQS successfully.')
