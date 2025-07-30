@@ -49,8 +49,8 @@ class TokenManager:
         print("Refreshing session " + self.session.refresh_token)
         session_data = self._refresh_token(self.session.refresh_token)
         new_session = Session(
-            token=f'Bearer {session_data["token"]}',
-            refresh_token=f'Bearer {session_data["refresh_token"]}',
+            token=session_data["token"],
+            refresh_token=session_data["refresh_token"],
             token_generated_at=time(),
             refresh_token_generated_at=self.session.refresh_token_generated_at
         )
@@ -101,8 +101,8 @@ class TokenManager:
 
         if response.status_code == 200:
             return {
-                'token': f'Bearer{response.json().get("accessJwt")}',
-                'refresh_token': f'Bearer{response.json().get("refreshJwt")}'
+                'token': f'Bearer {response.json().get("accessJwt")}',
+                'refresh_token': f'Bearer {response.json().get("refreshJwt")}'
             }
         elif response.status_code == 400:
             raise BlueSkyException('Invalid refresh token')
