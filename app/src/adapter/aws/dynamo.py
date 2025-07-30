@@ -10,7 +10,6 @@ class DynamoAdapter:
 
     def put_item(self, table_name: str, item: dict) -> None:
         try:
-            # Serialize the item to DynamoDB format
             serialized_item = {k: self.serializer.serialize(v) for k, v in item.items()}
             self.client.put_item(
                 TableName=table_name,
@@ -23,15 +22,16 @@ class DynamoAdapter:
 
     def get_item(self, table_name: str, key: dict) -> dict | None:
         try:
-            # Serialize the key to DynamoDB format
             serialized_key = {k: self.serializer.serialize(v) for k, v in key.items()}
             response = self.client.get_item(
                 TableName=table_name,
                 Key=serialized_key
             )
-            # Deserialize the item back to Python format
-            return {k: self.deserializer.deserialize(v) for k, v in response.get('Item', {}).items()}
-        except self.client.exceptions.ResourceNotFoundException:
+            if 'Item' not in response:
+                print(f'No item found in table {table_name} with key {key}.')
+                return None
+            return {k: self.deserializer.deserialize(v) for k, v in response['Item'].items()}
+        except KeyError:
             print(f'No item found in table {table_name} with key {key}.')
             return None
         except Exception as e:
