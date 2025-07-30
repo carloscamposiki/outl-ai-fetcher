@@ -31,7 +31,11 @@ class TokenManager:
             print("Refresh token expired")
             self._generate_new_session()
         else:
-            self._refresh_session()
+            try:
+                self._refresh_session()
+            except BlueSkyException as e:
+                print(f"Failed to refresh session: {e}")
+                self._generate_new_session()
 
     def _generate_new_session(self) -> None:
         user_credentials = self._get_user_credentials()
@@ -42,6 +46,7 @@ class TokenManager:
         self._update_secrets_manager()
 
     def _refresh_session(self) -> None:
+        print("Refreshing session " + self.session.refresh_token)
         session_data = self._refresh_token(self.session.refresh_token)
         new_session = Session(
             token=f'Bearer {session_data["token"]}',
@@ -99,6 +104,8 @@ class TokenManager:
                 'token': f'Bearer{response.json().get("accessJwt")}',
                 'refresh_token': f'Bearer{response.json().get("refreshJwt")}'
             }
+        elif response.status_code == 400:
+            raise BlueSkyException('Invalid refresh token')
         else:
             raise BlueSkyException(f'Failed to refresh token: {response.status_code} - {response.text}')
 
