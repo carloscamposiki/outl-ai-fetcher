@@ -118,8 +118,8 @@ class TestTokenManager(unittest.TestCase):
         refreshed_data = self.token_manager._refresh_token("mock_refresh_token")
 
         # Assert
-        self.assertEqual(refreshed_data['token'], 'Bearerrefreshed_mock_token')
-        self.assertEqual(refreshed_data['refresh_token'], 'Bearerrefreshed_mock_refresh_token')
+        self.assertEqual(refreshed_data['token'], 'Bearer refreshed_mock_token')
+        self.assertEqual(refreshed_data['refresh_token'], 'Bearer refreshed_mock_refresh_token')
 
     @patch('src.adapter.api.token_manager.requests.post')
     def test_refresh_token_failure(self, mock_post):
