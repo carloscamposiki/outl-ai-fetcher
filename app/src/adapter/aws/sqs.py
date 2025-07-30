@@ -11,7 +11,7 @@ class SqsAdapter:
         try:
             response = self.client.send_message(
                 QueueUrl=self.queue_url,
-                MessageBody=json.dumps(message)
+                MessageBody=json.dumps(message, ensure_ascii=False)
             )
             print(f'Message sent successfully: {response["MessageId"]}')
         except Exception as e:

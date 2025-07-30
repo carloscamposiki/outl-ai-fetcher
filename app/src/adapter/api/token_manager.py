@@ -68,7 +68,7 @@ class TokenManager:
         )
 
     def _generate_token(self, username: str, password: str) -> Session:
-        url = f'https://bsky.social/xrpc/com.atproto.server.createSession'
+        url = 'https://bsky.social/xrpc/com.atproto.server.createSession'
         payload = {
             'identifier': username,
             'password': password
@@ -86,13 +86,13 @@ class TokenManager:
             raise BlueSkyException(f'Failed to generate token: {response.status_code} - {response.text}')
 
     def _refresh_token(self, refresh_token: str) -> dict:
-        url = f'https://bsky.social/xrpc/com.atproto.server.refreshSession'
-        payload = {
-            'refresh_token': refresh_token
+        url = 'https://bsky.social/xrpc/com.atproto.server.refreshSession'
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': refresh_token
         }
-        headers = {'Content-Type': 'application/json'}
 
-        response = requests.post(url, json=payload, headers=headers)
+        response = requests.post(url, headers=headers)
 
         if response.status_code == 200:
             return {
