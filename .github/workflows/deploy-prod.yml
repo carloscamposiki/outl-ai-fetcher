@@ -43,7 +43,7 @@ jobs:
 
     - name: Terraform Init
       working-directory: infra
-      run: terraform init -backend-config="key=prod/terraform.tfstate"
+      run: terraform init -backend-config="key=prod/ool-fetcher/terraform.tfstate"
 
     - name: Select Terraform Workspace
       working-directory: infra
@@ -51,7 +51,7 @@ jobs:
 
     - name: Terraform Plan
       working-directory: infra
-      run: terraform plan -var-file="inventories/prod/ool-fetcher/terraform.tfvars"
+      run: terraform plan -var-file="inventories/prod/terraform.tfvars"
 
     - name: Terraform Apply
       working-directory: infra
