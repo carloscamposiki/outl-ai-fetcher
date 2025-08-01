@@ -56,3 +56,23 @@ jobs:
     - name: Terraform Apply
       working-directory: infra
       run: terraform apply -auto-approve -var-file="inventories/dev/terraform.tfvars"
+
+  create-mr-main:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Install GitHub CLI
+      run: sudo apt-get install -y gh
+
+    - name: Create PR to main
+      run: |
+          set -euo pipefail
+          PR_TITLE="Merge feature branch to main"
+          PR_BODY="This PR merges the feature branch into main."
+          gh pr create --base main --head ${{ github.ref }} --title "$PR_TITLE" --body "$PR_BODY" --label "auto-generated"
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
