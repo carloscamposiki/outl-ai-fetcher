@@ -92,6 +92,6 @@ class TrendsFetcher:
     def _remove_expired_trends(self, existing_trends: list[Trend]) -> list[Trend]:
         valid_trends = []
         for trend in existing_trends:
-            if trend.created_at < time.time() - 24 * 60 * 60:
+            if trend.created_at < time.time() - 48 * 60 * 60:
                 valid_trends.append(trend)
         return valid_trends
