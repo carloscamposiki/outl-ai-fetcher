@@ -44,17 +44,7 @@ jobs:
     - name: Install GitHub CLI
       run: sudo apt-get install -y gh
 
-    - name: Check for existing PR
-      id: check_pr
-      run: |
-          set -euo pipefail
-          EXISTING_PR=$(gh pr list --base develop --head ${{ github.ref }} --json number | jq -r '.[0].number')
-          echo "pr_number=$EXISTING_PR" >> $GITHUB_ENV
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Create PR to develop
-      if: env.pr_number == ''
       run: |
           set -euo pipefail
           PR_TITLE="Merge feature branch to develop"
