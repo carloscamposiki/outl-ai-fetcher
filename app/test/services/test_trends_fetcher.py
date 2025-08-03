@@ -37,8 +37,7 @@ class TestTrendsFetcher(unittest.TestCase):
         self.mock_dynamo_adapter.get_item.assert_called_once()
         self.mock_blue_sky_api.get_trends.assert_called_once()
 
-    @patch('time.time', return_value=1234567890.0)
-    def test_remove_expired_trends(self, mock_time):
+    def test_remove_expired_trends(self):
         """ Test the removal of expired trends from existing trends"""
         # Arrange
         existing_trends = [
